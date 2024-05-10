@@ -1,0 +1,12 @@
+{
+  "devDependencies": {
+    "ffmpeg-static": "^5.2.0"
+  },
+  "dependencies": {
+    "@electron/asar": "^3.2.4",
+    "koa": "^2.15.0",
+    "koa-bodyparser": "^4.4.1",
+    "koa-router": "^12.0.1",
+    "node-media-server": "^2.6.2"
+  }
+}
