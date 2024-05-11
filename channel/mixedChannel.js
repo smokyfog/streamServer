@@ -37,7 +37,7 @@ class videoChannel {
         '-f', 's16le',
         '-acodec', 'pcm_s16le',
         '-i', 'pipe:1',
-        '-preset', 'fast',
+        '-preset', 'ultrafast',
         // '-profile:v', 'baseline',
         '-tune', 'zerolatency',
         '-bf', '0',
@@ -47,7 +47,6 @@ class videoChannel {
         '-ar', '44100',
         '-acodec', 'pcm_s16le',
         '-c:v', 'libx264',
-
         //  '-shortest',
         '-rtmp_buffer',
         '300',  

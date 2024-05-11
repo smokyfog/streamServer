@@ -3,7 +3,7 @@
 const pathToFfmpeg = require('ffmpeg-static')
 console.log(pathToFfmpeg)
 const { spawn } = require('child_process')
-const json = require('../../scene.json')
+const json = require('../test/json/scene.json')
 
 let firstProcess;
 
@@ -25,6 +25,10 @@ function getCommand (data = json, taskName = '', time = 0) {
     if (item.default?.toLowerCase?.()?.trim?.()?.endsWith?.('.gif')) {
       command.push('-ignore_loop', 0)
     }
+    if (item.is_anchor) {
+      command.push(`-c:v`)
+      command.push(`libvpx-vp9`)
+    }
     // 命令
     command.push('-i')
     command.push(item.default)
@@ -33,7 +37,7 @@ function getCommand (data = json, taskName = '', time = 0) {
     
     if (item.is_anchor) {
       // 贴片
-      patch.push(`[${idx}:v]fps=25,scale=${1080}:${1920},colorkey=0x00a547:0.1:0.1[tp${idx}]`)
+      patch.push(`[${idx}:v]fps=25,scale=${1080}:${1920}[tp${idx}]`)
     } else {
       // 贴片
       patch.push(`[${idx}:v]fps=25,scale=${width}:${height}[tp${idx}]`)
@@ -81,8 +85,7 @@ function getCommand (data = json, taskName = '', time = 0) {
   let filter_complex = patch.join(';') + ';' + scene.join(';')
 
 
-  let audo_complex = ''
-
+  // let audo_complex = ''
   // audio.forEach(item => {
   //   audo_complex += `[${item}:a]`
   // })
@@ -97,14 +100,17 @@ function getCommand (data = json, taskName = '', time = 0) {
     // audo_complex,
     '-y',
     '-t', time,
-    '-preset', 'ultrafast',
+    '-preset', 'veryfast', // ultrafast superfast  veryfast 
     '-c:v', 'mjpeg', // 设置输出视频编解码器为mjpeg
     '-q:v', '25', // 设置JPEG输出的质量，可以根据需要调整
-    //  "-c:v",
-    // "libx264",
+    
     '-f', 'image2pipe', // 设置输出格式为image2pipe
     'pipe:1', // 将输出写入stdout
+    // "-c:v",
+    // "libx264",
+    // '/Users/yanqiang/Documents/gyjswrok/diaoyan/ffmpeg/app/test/test5.mp4'
   ]
+
 
     
   return commands || []

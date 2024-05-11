@@ -8,7 +8,7 @@ const genAudio = require('../generater/audio.js')
 const Ctrl = require('./controller/index.js')
 
 // 编排数据
-const json = require('../../scene.json')
+const json = require('./json/scene.json')
 // 主视频
 const video = json.layouts.layers.find(item => item.is_anchor).default
 
