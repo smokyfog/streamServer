@@ -2,6 +2,15 @@
   "devDependencies": {
     "ffmpeg-static": "^5.2.0"
   },
+  "scripts": {
+    "start": "node index.js"
+  },
+  "pkg": {
+    "scripts": "index.js",
+    "targets": [
+      "node18-linux-x64"
+    ]
+  },
   "dependencies": {
     "@electron/asar": "^3.2.4",
     "koa": "^2.15.0",

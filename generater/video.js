@@ -102,8 +102,8 @@ function getCommand (data = json, taskName = '', time = 0) {
     '-t', time,
     '-preset', 'veryfast', // ultrafast superfast  veryfast 
     '-c:v', 'mjpeg', // 设置输出视频编解码器为mjpeg
-    '-q:v', '25', // 设置JPEG输出的质量，可以根据需要调整
-    
+    '-q:v', '1', // 设置JPEG输出的质量，可以根据需要调整
+
     '-f', 'image2pipe', // 设置输出格式为image2pipe
     'pipe:1', // 将输出写入stdout
     // "-c:v",
@@ -125,13 +125,12 @@ function startTask({json = json, vpath = '', time = 0, log = false}) {
 
   const commands = getCommand(json, vpath, time)
 
-  console.log('commands', commands);
+  // console.log('commands', commands);
 
   firstProcess = spawn(pathToFfmpeg, commands)
 
   let buffers = Buffer.alloc(0);
 
-  console.log('!!!!!!!!!!!!!!!!!!!!video vpath', vpath);
 
   global[vpath] = []
 

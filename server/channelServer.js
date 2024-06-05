@@ -12,7 +12,7 @@ function startChannelServer ({ rtmp = '' }) {
   // 混流实例
   const mixedIns = new mixedChannel({
     rtmpUrl: rtmp,
-    log: false
+    log: true
   })
   global.mixedIns = mixedIns
   mixedIns.start()

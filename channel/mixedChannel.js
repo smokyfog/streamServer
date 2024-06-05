@@ -30,24 +30,32 @@ class videoChannel {
       this.videoStream = spawn('ffmpeg', [
         '-y',
         '-an', 
+        // 下面是视频流的形式
+        // '-f', 'rawvideo',
+        // '-vcodec', 'rawvideo',
+        // '-pix_fmt', 'rgb24',
+        // '-s', '1080x1920',
+        // 下面是jpeg帧的形式
         '-f', 'mjpeg',   // 添加这一行
-        // '-pix_fmt', 'bgr24',
         '-r', '25',
         '-i', 'pipe:0',
         '-f', 's16le',
         '-acodec', 'pcm_s16le',
         '-i', 'pipe:1',
+        '-stream_loop', '-1', 
+        '-i', '/home/mirror/yanqiang/streamServer/test/file/bgmusic.mp3',
         '-preset', 'ultrafast',
         // '-profile:v', 'baseline',
         '-tune', 'zerolatency',
         '-bf', '0',
         '-g', '1',
-        '-b:v', "15000k",
         '-ac', '1',
         '-ar', '44100',
         '-acodec', 'pcm_s16le',
         '-c:v', 'libx264',
+        '-filter_complex', '[2:0]volume=0.1[a1];[1:0][a1]amix=inputs=2:duration=longest',
         //  '-shortest',
+        // '-b:v', "40000k",
         '-rtmp_buffer',
         '300',  
         '-f', 'flv',
@@ -61,13 +69,16 @@ class videoChannel {
       });
       
       this.videoStream.stderr.on('data', (data) => {
-        console.error(`videoStream stderr: ${data}`);
+        if (this.log) {
+          console.error(`mixStream log: ${data}`);
+        }
+       
       });
 
       this.videoStream.stderr.on('data', (data) => {
-        // if (this.log) {
-          console.error(`videoStream stderr: ${data}`);
-        // }
+        if (this.log) {
+          console.error(`mixStream log: ${data}`);
+        }
       });
 
       this.videoStream.on('exit', (code) => {

@@ -54,7 +54,7 @@ class pushServer {
         console.log('预生成下一个视频', global.a_next, global.v_next );
       }
       try {
-        const abuffer = this.pushAudio()
+        const abuffer = this.pushAudio2()
         const vbuffer = this.pushVideo()
 
         Promise.all([abuffer, vbuffer]).then(buffer => {
@@ -102,15 +102,17 @@ class pushServer {
           console.log('预生成下一个视频', global.a_next, global.v_next );
         }
         try {
-          const abuffer = this.pushAudio()
+          const abuffer = this.pushAudio2()
           const vbuffer = this.pushVideo()
   
           Promise.all([abuffer, vbuffer]).then(buffer => {
             // global.acIns.input(buffer[0]);
             // global.vcIns.input(buffer[1]);
-  
             global.mixedIns.inputVideo(buffer[1]);
-            global.mixedIns.inputAudio(buffer[0]);
+            // console.log('buffer[0]?.length', buffer[0]?.length);
+            if (buffer[0]?.length) {
+              global.mixedIns.inputAudio(buffer[0]);
+            }
             this.index++
           }).catch(err => {
             console.log(err);
@@ -147,12 +149,58 @@ class pushServer {
     })
   }
 
+   // 获取视频文件
+   pushAudio2() {
+    const wavFrameNum = Math.floor((44100 * 2) / 25);
+    const totalFrames = global[this.audioDir].length;
+
+    // 计算最后一个片段的起始和结束索引
+    const startIdx = this.index * wavFrameNum;
+    const endIdx = Math.min((this.index + 1) * wavFrameNum, totalFrames);
+
+    // // 计算实际的音频帧数
+    const actualFrames = endIdx - startIdx;
+
+    let speechSegment
+
+    if (actualFrames < wavFrameNum) {
+      console.log('小于预期');
+    }
+
+    // // 如果实际帧数少于预期的帧数
+    // if (actualFrames < wavFrameNum) {
+    //   // 计算需要填充的静音帧数
+    //   const silentFrames = wavFrameNum - actualFrames;
+
+    //   // 创建一个静音缓冲区
+    //   const silentBuffer = Buffer.alloc(silentFrames, 0); // 16位音频，每个样本占两个字节
+
+    //   // 将静音缓冲区添加到最后一个片段的末尾
+    //   speechSegment = Buffer.concat([
+    //       global[this.audioDir].slice(startIdx, endIdx), // 实际音频数据
+    //       silentBuffer // 静音数据
+    //   ]);
+
+    // } else {
+    //   // 如果实际帧数已经足够，直接使用实际音频数据
+    //   speechSegment = global[this.audioDir].slice(startIdx, endIdx);
+    // }
+
+    speechSegment = global[this.audioDir].slice(startIdx, endIdx);
+
+    return new Promise((resolve, rejects) => {
+      // console.log('speechSegment', speechSegment);
+      resolve(speechSegment)
+    })
+  }
+
   // 获取视频文件
   pushAudio() {
     const wavFrameNum = Math.floor((44100 * 2) / 25);
     const startIdx = this.index * wavFrameNum;
     const endIdx = (this.index + 1) * wavFrameNum;
 
+    console.log('global[this.audioDir].length', global[this.audioDir].length, startIdx, endIdx);
     const speechSegment = global[this.audioDir].slice(startIdx, endIdx);
 
     return new Promise((resolve, rejects) => {
